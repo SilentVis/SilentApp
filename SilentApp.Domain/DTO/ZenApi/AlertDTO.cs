@@ -17,7 +17,7 @@ namespace SilentApp.Domain.DTO.ZenApi
         public string LocationRegion { get; set; }
 
         [JsonPropertyName("location_uid")]
-        public int LocationUid { get; set; }
+        public string LocationId { get; set; }
 
         [JsonPropertyName("notes")]
         public string Notes { get; set; }
@@ -25,9 +25,10 @@ namespace SilentApp.Domain.DTO.ZenApi
         [JsonPropertyName("started_at")]
         public DateTimeOffset StartedAt { get; set; }
 
+        [JsonPropertyName("alert_type")]
+        public string AlertType { get; set; }
+
         [JsonIgnore]
         public string FormattedId => Id.ToString();
-
-        public string LocationFormattedId => LocationUid.ToString();
     }
 }

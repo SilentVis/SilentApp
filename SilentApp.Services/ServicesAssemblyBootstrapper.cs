@@ -15,8 +15,9 @@ namespace SilentApp.Services
         {
             container.RegisterInstance(TelegramBotClientFactory.Create(configuration));
 
-            container.Register<IAzureStorageTableDataProvider, AzureStorageTableDataProvider>(Lifestyle.Scoped);
-            container.Register<IAlertsApiDataProvider, AlertsApiDataProvider>(Lifestyle.Scoped);
+            container.Register<IAzureStorageTableDataProvider, AzureStorageTableDataProvider>(Lifestyle.Singleton);
+            container.Register<IAlertsApiDataProvider, AlertsApiDataProvider>(Lifestyle.Singleton);
+            container.Register<IAlertsQueueDataProvider, AlertsQueueProvider>(Lifestyle.Singleton);
 
             RegisterHandlers(container, appAssemblies, typeof(ICommandHandler<>));
             RegisterHandlers(container, appAssemblies, typeof(IQueryRunner<,>));

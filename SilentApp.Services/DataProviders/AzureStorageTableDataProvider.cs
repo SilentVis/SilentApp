@@ -49,6 +49,19 @@ namespace SilentApp.Services.DataProviders
             return record;
         }
 
+        public async Task<T> GetRecord<T>(Expression<Func<T, bool>> filter) where T : BaseStorageEntity
+        {
+            var pages = _tableClient.QueryAsync<T>(filter).AsPages();
+            var records = (await FormatResults(pages)).ToList();
+
+            return records.Count switch
+            {
+                0 => throw new ArgumentException("No results found"),
+                1 => records.Single(),
+                _ => throw new ArgumentException("More than 1 result found")
+            };
+        }
+
         public async Task UpsertRecord<T>(T entity) where T : BaseStorageEntity
         {
             await _tableClient.UpsertEntityAsync<T>(entity);

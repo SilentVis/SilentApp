@@ -10,6 +10,8 @@
 
         public string LocationId { get; set; }
 
+        public string Notes { get; set; }
+
         public bool IsUsernameBased => !string.IsNullOrWhiteSpace(TelegramUsername);
     }
 }

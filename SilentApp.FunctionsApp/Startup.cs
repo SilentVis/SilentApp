@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SilentApp.FunctionsApp;
 using SilentApp.Infrastructure;
+using SilentApp.Services.Contracts;
 using SimpleInjector;
 
 [assembly: FunctionsStartup(typeof(Startup))]
@@ -18,6 +19,8 @@ namespace SilentApp.FunctionsApp
         {
             services.AddSingleton(this);
             services.AddSingleton<Completion>();
+
+            services.AddScoped<IRequestDispatcher,RequestDispatcher>();
 
             services.AddSimpleInjector(_container, options =>
             {
@@ -43,7 +46,10 @@ namespace SilentApp.FunctionsApp
 
         public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
         {
-            var configConnectionString = Environment.GetEnvironmentVariable(ConfigurationKeyConstants.ConfigConnectionString);
+            //var configConnectionString = Environment.GetEnvironmentVariable(ConfigurationKeyConstants.ConfigConnectionString);
+            var configConnectionString =
+                "Endpoint=https://steres-function-app-config.azconfig.io;Id=3UQM-l0-s0:Wps/OPJvCFFnPZi40wUt;Secret=z23agnURp9gpPFVNXibrynbDXWiZrlGjKQX2KngFBLA=";
+
             builder.ConfigurationBuilder.AddAzureAppConfiguration(configConnectionString);
         }
 

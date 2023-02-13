@@ -17,8 +17,8 @@ namespace SilentApp.FunctionsApp.Services.Commands.Handlers
         private readonly IAzureStorageTableDataProvider _azureStorageTableDataProvider;
         private readonly ILogger _logger;
 
-        private const string StartAlertMessage = "";
-        private const string FinishAlertMessage = "";
+        private const string StartAlertMessageTemplate = "\U0001f170 {0}: AIR ALERT! \U0001f170";
+        private const string FinishAlertMessageTemplate = "\U00002747 {0}: Finish alert! \U00002747";
 
         public SendTelegramNotificationsCommandHandler(ITelegramBotClient telegramBotClient, IAzureStorageTableDataProvider azureStorageTableDataProvider, ILogger logger)
         {
@@ -48,7 +48,11 @@ namespace SilentApp.FunctionsApp.Services.Commands.Handlers
                 return new RequestResult();
             }
 
-            var message = command.Type == AlertMessageType.StartAlert ? StartAlertMessage : FinishAlertMessage;
+            var messageTemplate = command.Type == AlertMessageType.StartAlert
+                ? StartAlertMessageTemplate
+                : FinishAlertMessageTemplate;
+
+            var message = string.Format(messageTemplate, location.Name);
 
             foreach (var subscription in subscriptions)
             {

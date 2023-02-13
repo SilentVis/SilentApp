@@ -12,19 +12,19 @@ namespace SilentApp.Infrastructure
             this Container container,
             IConfiguration configuration)
         {
-            var type = typeof(IAssemblyBootstrapper);
+            var bootstrapperInterface = typeof(IAssemblyBootstrapper);
 
             var appAssemblies = AppDomain.CurrentDomain.GetAssemblies()
                 .Where(assembly => assembly.FullName.StartsWith(NamespacePrefix));
 
             var bootstrappers = appAssemblies.SelectMany(a => a.GetTypes())
-                .Where(t => t.IsClass && !type.IsAbstract && type.IsAssignableFrom(t))
+                .Where(type => type is { IsClass: true, IsAbstract: false } && bootstrapperInterface.IsAssignableFrom(type))
                 .Select(type => Activator.CreateInstance(type) as IAssemblyBootstrapper)
                 .ToList();
 
             foreach (var bootstrapper in bootstrappers)
             {
-                bootstrapper.RegisterDependencies(container, appAssemblies, configuration);
+                bootstrapper.RegisterDependencies(container, appAssemblies, configuration); 
             }
         }
 
