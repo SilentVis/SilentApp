@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <AzureFunctionsVersion>v4</AzureFunctionsVersion>
+    <UserSecretsId>4fd96fd3-1139-4ec2-afb1-eae4c0cb9c60</UserSecretsId>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage.Queues" Version="5.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.AzureAppConfiguration" Version="5.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.1.1" />
+    <PackageReference Include="SimpleInjector" Version="5.4.1" />
+    <PackageReference Include="SimpleInjector.Integration.ServiceCollection" Version="5.4.0" />
+    <PackageReference Include="Telegram.Bot" Version="18.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SilentApp.Domain\SilentApp.Domain.csproj" />
+    <ProjectReference Include="..\SilentApp.Infrastructure\SilentApp.Infrastructure.csproj" />
+    <ProjectReference Include="..\SilentApp.Services\SilentApp.Services.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="host.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="local.settings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\Queries\Runnners\" />
+  </ItemGroup>
+</Project>
