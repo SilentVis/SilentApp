@@ -46,9 +46,7 @@ namespace SilentApp.FunctionsApp
 
         public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
         {
-            //var configConnectionString = Environment.GetEnvironmentVariable(ConfigurationKeyConstants.ConfigConnectionString);
-            var configConnectionString =
-                "Endpoint=https://steres-function-app-config.azconfig.io;Id=r9zi-l0-s0:5/IG+vf4WmnWQ7AY8zy5;Secret=FU1zDT2r1yw768Z5JF/e/Kn3lhkhU3Bnhu4Rwd+7E1I=";
+            var configConnectionString = Environment.GetEnvironmentVariable(ConfigurationKeyConstants.ConfigConnectionString);
             builder.ConfigurationBuilder.AddAzureAppConfiguration(configConnectionString);
         }
 
