@@ -7,11 +7,5 @@
         "excludedTypes": "Request"
       }
     }
-  },
-  "http": {
-    "routePrefix": "",
-    "maxConcurrentRequests": 50,
-    "maxOutstandingRequests": 100,
-    "dynamicThrottlesEnabled": false
   }
 }
