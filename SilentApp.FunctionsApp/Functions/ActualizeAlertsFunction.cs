@@ -6,13 +6,10 @@ using SilentApp.Services.Contracts;
 
 namespace SilentApp.FunctionsApp.Functions
 {
-    public class ActualizeAlertsFunction : FunctionBase
+    public class RenewAlertsFunction : FunctionBase
     {
-        private readonly IRequestDispatcher _requestDispatcher;
-
-        public ActualizeAlertsFunction(IRequestDispatcher requestDispatcher)
+        public RenewAlertsFunction(IRequestDispatcher requestDispatcher):base(requestDispatcher)
         {
-            _requestDispatcher = requestDispatcher;
         }
 
         [FunctionName("RenewAlerts")]
@@ -23,7 +20,7 @@ namespace SilentApp.FunctionsApp.Functions
 
             if (!result.IsSuccessful)
             {
-                LogError(log, nameof(ActualizeAlertsFunction), result.Error);
+                LogError(log, nameof(RenewAlertsFunction), result.Error);
             }
         }
     }

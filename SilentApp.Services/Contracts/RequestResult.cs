@@ -24,6 +24,6 @@
 
         public RequestResult(Error error) : base(error) { }
 
-        private T? Data { get; }
+        public T? Data { get; }
     }
 }
