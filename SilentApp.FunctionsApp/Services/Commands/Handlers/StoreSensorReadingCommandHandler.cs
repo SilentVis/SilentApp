@@ -26,6 +26,7 @@ namespace SilentApp.FunctionsApp.Services.Commands
                     Humidity = command.Humidity,
                     DeviceName = command.DeviceName,
                     Timestamp = DateTimeOffset.UtcNow,
+                    Date = command.Date,
                     PartitionKey = TemperatureMeasurement.EntityPartitionKey
                 };
 
