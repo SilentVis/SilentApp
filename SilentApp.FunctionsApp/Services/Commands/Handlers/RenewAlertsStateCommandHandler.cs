@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -40,7 +41,7 @@ namespace SilentApp.FunctionsApp.Services.Commands.Handlers
             if (!currentAlertsResponse.IsSuccessful)
             {
                 var error = new Error(
-                    ErrorType.DataProviderError, 
+                    ErrorType.DataProviderError,
                     "ERROR_GETTING_ALERTS_STATE",
                     $"$Unable to get alerts state because of \"{currentAlertsResponse.Error.Message}\"");
 
@@ -65,20 +66,17 @@ namespace SilentApp.FunctionsApp.Services.Commands.Handlers
                 PartitionKey = Location.EntityPartitionKey
             });
 
-            var locations = await _azureStorageTableDataProvider.GetRecords<Location>(Location.EntityPartitionKey);
-            var foundLocationIds = locations.Select(s => s.RowKey).ToList();
+            var existingLocations = await _azureStorageTableDataProvider.GetRecords<Location>(Location.EntityPartitionKey);
+            var foundLocationIds = existingLocations.Select(s => s.RowKey).ToList();
 
             var newLocationIds = locationIds.Where(id => !foundLocationIds.Contains(id)).ToList();
             var newLocations = alertedLocations.Where(l => newLocationIds.Contains(l.RowKey));
 
-            foreach (var location in newLocations)
+            foreach (var newLocation in newLocations)
             {
-                if (location.Type != LocationType.Region)
+                if (newLocation.Type != LocationType.Region)
                 {
-                    var region = await _azureStorageTableDataProvider.GetRecord<Location>(x => 
-                        x.PartitionKey == Location.EntityPartitionKey
-                        && x.Name == location.Region 
-                        && x.Type == LocationType.Region);
+                    var region = existingLocations.FirstOrDefault(l => l.Name == newLocation.Name);
 
                     if (region == null)
                     {
@@ -86,10 +84,10 @@ namespace SilentApp.FunctionsApp.Services.Commands.Handlers
                         continue;
                     }
 
-                    location.RegionId = region.RowKey;
+                    newLocation.RegionId = region.RowKey;
                 }
 
-                await _azureStorageTableDataProvider.UpsertRecord(location);
+                await _azureStorageTableDataProvider.UpsertRecord(newLocation);
             }
         }
 
@@ -105,8 +103,6 @@ namespace SilentApp.FunctionsApp.Services.Commands.Handlers
 
             var alertsToDelete = existingAlerts.Where(a => endedAlertIds.Contains(a.RowKey)).ToList();
             var alertsToSave = currentAlerts.Where(c => newAlertIds.Contains(c.FormattedId)).ToList();
-
-            alertsToSave.Add(new AlertDTO(){LocationId = "23", Id = 100, AlertType = "other"});
 
             var messages = new List<AlertMessage>();
 
