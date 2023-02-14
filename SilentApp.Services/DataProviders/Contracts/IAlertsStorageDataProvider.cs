@@ -11,7 +11,7 @@ namespace SilentApp.Services.DataProviders.Contracts
 
         Task<T> GetRecord<T>(string partitionKey, string rowKey) where T : BaseStorageEntity;
 
-        Task<T> GetRecord<T>(Expression<Func<T, bool>> filter) where T : BaseStorageEntity;
+        Task<T?> GetRecord<T>(Expression<Func<T, bool>> filter) where T : BaseStorageEntity;
 
         Task UpsertRecord<T>(T entity) where T : BaseStorageEntity;
 

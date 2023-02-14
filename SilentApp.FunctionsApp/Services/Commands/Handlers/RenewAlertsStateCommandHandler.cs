@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using SilentApp.Domain.DTO.Internal;
 using SilentApp.Domain.DTO.ZenApi;
 using SilentApp.Domain.Entities;
@@ -19,14 +20,17 @@ namespace SilentApp.FunctionsApp.Services.Commands.Handlers
 
         private readonly IAlertsQueueDataProvider _alertsQueueDataProvider;
 
+        private readonly ILogger _logger;
+
         public RenewAlertsStateCommandHandler(
             IAlertsApiDataProvider alertsApiDataProvider,
             IAzureStorageTableDataProvider azureStorageTableDataProvider,
-            IAlertsQueueDataProvider alertsQueueDataProvider)
+            IAlertsQueueDataProvider alertsQueueDataProvider, ILogger logger)
         {
             _alertsApiDataProvider = alertsApiDataProvider;
             _azureStorageTableDataProvider = azureStorageTableDataProvider;
             _alertsQueueDataProvider = alertsQueueDataProvider;
+            _logger = logger;
         }
 
         public async Task<RequestResult> HandleAsync(RenewAlertsStateCommand command)
@@ -76,6 +80,12 @@ namespace SilentApp.FunctionsApp.Services.Commands.Handlers
                         && x.Name == location.Region 
                         && x.Type == LocationType.Region);
 
+                    if (region == null)
+                    {
+                        _logger.LogError("Unable to set region to non-region location, skipping for now");
+                        continue;
+                    }
+
                     location.RegionId = region.RowKey;
                 }
 
@@ -95,6 +105,8 @@ namespace SilentApp.FunctionsApp.Services.Commands.Handlers
 
             var alertsToDelete = existingAlerts.Where(a => endedAlertIds.Contains(a.RowKey)).ToList();
             var alertsToSave = currentAlerts.Where(c => newAlertIds.Contains(c.FormattedId)).ToList();
+
+            alertsToSave.Add(new AlertDTO(){LocationId = "23", Id = 100, AlertType = "other"});
 
             var messages = new List<AlertMessage>();
 

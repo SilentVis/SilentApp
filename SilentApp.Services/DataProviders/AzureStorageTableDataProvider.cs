@@ -2,6 +2,7 @@
 using Azure;
 using Azure.Data.Tables;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using SilentApp.Domain.Entities;
 using SilentApp.Infrastructure;
 using SilentApp.Services.DataProviders.Contracts;
@@ -11,9 +12,11 @@ namespace SilentApp.Services.DataProviders
     public class AzureStorageTableDataProvider : IAzureStorageTableDataProvider
     {
         private readonly TableClient _tableClient;
+        private readonly ILogger _log;
 
-        public AzureStorageTableDataProvider(IConfiguration configuration)
+        public AzureStorageTableDataProvider(IConfiguration configuration, ILogger log)
         {
+            _log = log;
             var connectionString = configuration[ConfigurationKeyConstants.AzureStorageConnectionString];
             var tableName = configuration[ConfigurationKeyConstants.AzureStorageTableName];
 
@@ -28,7 +31,7 @@ namespace SilentApp.Services.DataProviders
             return FormatResults(pages);
         }
 
-        public Task<IEnumerable<T>> GetRecords<T>(string partitionKey, string[] rowKeys) where T: BaseStorageEntity
+        public Task<IEnumerable<T>> GetRecords<T>(string partitionKey, string[] rowKeys) where T : BaseStorageEntity
         {
             var pages = _tableClient
                 .QueryAsync<T>(x => x.PartitionKey == partitionKey && rowKeys.Contains(x.RowKey))
@@ -49,16 +52,26 @@ namespace SilentApp.Services.DataProviders
             return record;
         }
 
-        public async Task<T> GetRecord<T>(Expression<Func<T, bool>> filter) where T : BaseStorageEntity
+        public async Task<T?> GetRecord<T>(Expression<Func<T, bool>> filter) where T : BaseStorageEntity
         {
             var pages = _tableClient.QueryAsync<T>(filter).AsPages();
             var records = (await FormatResults(pages)).ToList();
 
-            return records.Count switch
+            switch (records.Count)
             {
-                0 => throw new ArgumentException("No results found"),
-                1 => records.Single(),
-                _ => throw new ArgumentException("More than 1 result found")
+                case 0:
+                    {
+                        _log.LogError("0 results found while execution GetRecord(filter) query for entity {entityName}", nameof(T));
+                        return null;
+                    }
+                    
+                case 1:
+                    return records.Single();
+                default:
+                {
+                    _log.LogError("Too many results found while execution GetRecord(filter) query for entity {entityName}", nameof(T));
+                    return null;
+                }
             };
         }
 
