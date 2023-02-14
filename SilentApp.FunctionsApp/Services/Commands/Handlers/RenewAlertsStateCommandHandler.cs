@@ -76,7 +76,7 @@ namespace SilentApp.FunctionsApp.Services.Commands.Handlers
             {
                 if (newLocation.Type != LocationType.Region)
                 {
-                    var region = existingLocations.FirstOrDefault(l => l.Name == newLocation.Name);
+                    var region = existingLocations.FirstOrDefault(l => l.Name == newLocation.Region);
 
                     if (region == null)
                     {
