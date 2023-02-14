@@ -10,8 +10,6 @@ using SilentApp.Services.DataProviders.Contracts;
 
 namespace SilentApp.FunctionsApp.Tests
 {
-
-
     public class RegisterSubscriptionCommandHandlerTests
     {
         private readonly IAzureStorageTableDataProvider _dataProvider;

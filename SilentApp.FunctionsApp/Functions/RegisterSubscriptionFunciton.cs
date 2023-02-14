@@ -11,13 +11,10 @@ using SilentApp.FunctionsApp.Services.Commands;
 
 namespace SilentApp.FunctionsApp.Functions
 {
-    public class RegisterSubscriptionFunction
+    public class RegisterSubscriptionFunction : FunctionBase
     {
-        private readonly IRequestDispatcher _requestDispatcher;
-
-        public RegisterSubscriptionFunction(IRequestDispatcher requestDispatcher)
+        public RegisterSubscriptionFunction(IRequestDispatcher requestDispatcher) : base(requestDispatcher)
         {
-            _requestDispatcher = requestDispatcher;
         }
 
         [FunctionName("RegisterSubscription")]
