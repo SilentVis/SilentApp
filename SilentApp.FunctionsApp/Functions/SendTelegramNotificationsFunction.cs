@@ -11,11 +11,8 @@ namespace SilentApp.FunctionsApp.Functions
 {
     public class SendTelegramNotificationsFunction : FunctionBase
     {
-        private readonly IRequestDispatcher _requestDispatcher;
-
-        public SendTelegramNotificationsFunction(IRequestDispatcher requestDispatcher)
+        public SendTelegramNotificationsFunction(IRequestDispatcher requestDispatcher) : base(requestDispatcher)
         {
-            _requestDispatcher = requestDispatcher;
         }
 
         [FunctionName("SendTelegramNotifications")]
