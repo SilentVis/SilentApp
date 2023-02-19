@@ -20,7 +20,7 @@ namespace SilentApp.Services.DataProviders
 
         public async Task<TableClient> CreateTableClient<T>() where T : BaseTableEntity
         {
-            var tableName = _storageNameIndex.GetTableName(nameof(T));
+            var tableName = _storageNameIndex.GetTableName(typeof(T).Name);
 
             var client = new TableClient(_storageConnectionString, tableName);
 
@@ -31,7 +31,7 @@ namespace SilentApp.Services.DataProviders
 
         public async Task<QueueClient> CreateQueueClient<T>() where T : BaseQueueMessage
         {
-            var queueName = _storageNameIndex.GetQueueName(nameof(T));
+            var queueName = _storageNameIndex.GetQueueName(typeof(T).Name);
             var client = new QueueClient(_storageConnectionString, queueName, new QueueClientOptions()
             {
                 MessageEncoding = QueueMessageEncoding.Base64

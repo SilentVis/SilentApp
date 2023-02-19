@@ -2,7 +2,7 @@
 {
     public class AppConstants
     {
-        public const string AlertsTableName = "alerts";
+        public const string AlertsTableName = "alertsTable";
         public const string AlertsQueueName = "alerts-queue";
 
         public const string SensorReadingTableName = "sensors";
