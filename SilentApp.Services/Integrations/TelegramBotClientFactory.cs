@@ -7,7 +7,7 @@ namespace SilentApp.Services.Integrations
 {
     public class TelegramBotClientFactory
     {
-        public static async Task<ITelegramBotClient> Create(SilentAppConfiguration configuration)
+        public static ITelegramBotClient Create(SilentAppConfiguration configuration)
         {
             var apiKey = configuration.Telegram.ApiKey;
             var webhookUrl = $"{configuration.HostUrl}/api/{AppConstants.TelegramWebhookFunctionName}";
@@ -17,9 +17,10 @@ namespace SilentApp.Services.Integrations
 
             if (!configuration.IsDevelopmentEnv)
             {
-                await client.SetWebhookAsync(
+                client.SetWebhookAsync(
                     url: webhookUrl,
-                    allowedUpdates: new List<UpdateType>() { UpdateType.Message });
+                    allowedUpdates: new List<UpdateType>() { UpdateType.Message })
+                    .GetAwaiter().GetResult();
             }
 
             return client;
