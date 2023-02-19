@@ -1,8 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Text.Json;
-using Microsoft.Extensions.Configuration;
 using SilentApp.Domain.DTO.ZenApi;
-using SilentApp.Infrastructure;
+using SilentApp.Infrastructure.Configuration;
 using SilentApp.Services.DataProviders.Contracts;
 
 namespace SilentApp.Services.DataProviders
@@ -12,10 +11,10 @@ namespace SilentApp.Services.DataProviders
         private readonly string _alertsApiKey;
         private readonly string _alertsApiUrl;
 
-        public AlertsApiDataProvider(IConfiguration _configuration)
+        public AlertsApiDataProvider(SilentAppConfiguration _configuration)
         {
-            _alertsApiKey = _configuration[ConfigurationKeyConstants.AlertsApiKey];
-            _alertsApiUrl = _configuration[ConfigurationKeyConstants.AlertsApiUrl];
+            _alertsApiKey = _configuration.AlertsApi.ApiKey;
+            _alertsApiUrl = _configuration.AlertsApi.Url;
         }
 
         public async Task<AlertsResponseDTO> GetActualAlertsState()
@@ -29,6 +28,11 @@ namespace SilentApp.Services.DataProviders
 
             var responseRawData = await response.Content.ReadAsStringAsync();
             var responseData = JsonSerializer.Deserialize<AlertsResponseDTO>(responseRawData);
+
+            if (responseData == null)
+            {
+                throw new ArgumentException("Unable to retrieve data from alerts API - null response returned");
+            }
 
             return responseData;
         }

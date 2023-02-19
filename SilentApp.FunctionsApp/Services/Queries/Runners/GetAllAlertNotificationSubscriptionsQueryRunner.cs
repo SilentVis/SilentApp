@@ -9,9 +9,9 @@ namespace SilentApp.FunctionsApp.Services.Queries.Runners
 {
     public class GetAllAlertNotificationSubscriptionsQueryRunner : IQueryRunner<GetAllAlertNotificationSubscriptionsQuery, IEnumerable<AlertNotificationSubscription>>
     {
-        private readonly IAzureStorageTableDataProvider _tableDataProvider;
+        private readonly IAzureTableDataProvider _tableDataProvider;
 
-        public GetAllAlertNotificationSubscriptionsQueryRunner(IAzureStorageTableDataProvider tableDataProvider)
+        public GetAllAlertNotificationSubscriptionsQueryRunner(IAzureTableDataProvider tableDataProvider)
         {
             _tableDataProvider = tableDataProvider;
         }

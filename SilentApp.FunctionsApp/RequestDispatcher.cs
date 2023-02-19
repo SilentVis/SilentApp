@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using SilentApp.Services.Contracts;
 using SimpleInjector;
+using SimpleInjector.Lifestyles;
 
 namespace SilentApp.FunctionsApp
 {
@@ -15,16 +16,23 @@ namespace SilentApp.FunctionsApp
 
         public Task<RequestResult> DispatchCommand<TCommand>(TCommand command) where TCommand : ICommand
         {
-            var handler = _container.GetInstance<ICommandHandler<TCommand>>();
+            using (var scope = AsyncScopedLifestyle.BeginScope(_container))
+            {
 
-            return handler.HandleAsync(command);
+                var handler = _container.GetInstance<ICommandHandler<TCommand>>();
+
+                return handler.HandleAsync(command);
+            }
         }
 
         public Task<RequestResult<TResult>> DispatchQuery<TQuery, TResult>(TQuery query) where TQuery : IQuery<TResult>
         {
-            var runner = _container.GetInstance<IQueryRunner<TQuery, TResult>>();
+            using (var scope = AsyncScopedLifestyle.BeginScope(_container))
+            {
+                var runner = _container.GetInstance<IQueryRunner<TQuery, TResult>>();
 
-            return runner.HandleAsync(query);
+                return runner.HandleAsync(query);
+            }
         }
     }
 }

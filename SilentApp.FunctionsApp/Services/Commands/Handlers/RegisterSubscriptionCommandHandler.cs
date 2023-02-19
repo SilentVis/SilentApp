@@ -7,9 +7,9 @@ namespace SilentApp.FunctionsApp.Services.Commands.Handlers
 {
     public class RegisterSubscriptionCommandHandler : ICommandHandler<RegisterSubscriptionCommand>
     {
-        private readonly IAzureStorageTableDataProvider _dataProvider;
+        private readonly IAzureTableDataProvider _dataProvider;
 
-        public RegisterSubscriptionCommandHandler(IAzureStorageTableDataProvider dataProvider)
+        public RegisterSubscriptionCommandHandler(IAzureTableDataProvider dataProvider)
         {
             _dataProvider = dataProvider;
         }

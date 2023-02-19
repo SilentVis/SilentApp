@@ -10,4 +10,8 @@
     <PackageReference Include="Azure.Data.Tables" Version="12.8.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SilentApp.Infrastructure\SilentApp.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

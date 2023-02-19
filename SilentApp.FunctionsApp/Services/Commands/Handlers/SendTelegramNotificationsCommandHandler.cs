@@ -14,23 +14,23 @@ namespace SilentApp.FunctionsApp.Services.Commands.Handlers
     internal class SendTelegramNotificationsCommandHandler : ICommandHandler<SendTelegramNotificationsCommand>
     {
         private readonly ITelegramBotClient _telegramBotClient;
-        private readonly IAzureStorageTableDataProvider _azureStorageTableDataProvider;
+        private readonly IAzureTableDataProvider _azureTableDataProvider;
         private readonly ILogger _logger;
 
         private const string StartAlertMessageTemplate = "\U0001f170 {0}: AIR ALERT! \U0001f170";
         private const string FinishAlertMessageTemplate = "\U00002747 {0}: Finish alert! \U00002747";
 
-        public SendTelegramNotificationsCommandHandler(ITelegramBotClient telegramBotClient, IAzureStorageTableDataProvider azureStorageTableDataProvider, ILogger logger)
+        public SendTelegramNotificationsCommandHandler(ITelegramBotClient telegramBotClient, IAzureTableDataProvider azureTableDataProvider, ILogger logger)
         {
             _telegramBotClient = telegramBotClient;
-            _azureStorageTableDataProvider = azureStorageTableDataProvider;
+            _azureTableDataProvider = azureTableDataProvider;
             _logger = logger;
         }
 
         public async Task<RequestResult> HandleAsync(SendTelegramNotificationsCommand command)
         {
             var locationId = command.LocationId;
-            var location = await _azureStorageTableDataProvider.GetRecord<Location>(Location.EntityPartitionKey, command.LocationId);
+            var location = await _azureTableDataProvider.GetRecord<Location>(Location.EntityPartitionKey, command.LocationId);
 
             if (location.Type != LocationType.Region)
             {
@@ -38,7 +38,7 @@ namespace SilentApp.FunctionsApp.Services.Commands.Handlers
             }
 
             var subscriptions = (await
-                    _azureStorageTableDataProvider.GetRecords<AlertNotificationSubscription>(s =>
+                    _azureTableDataProvider.GetRecords<AlertNotificationSubscription>(s =>
                         s.PartitionKey == AlertNotificationSubscription.EntityPartitionKey &&
                         s.LocationId == locationId))
                 .ToList();

@@ -1,6 +1,7 @@
-﻿namespace SilentApp.Domain.Entities
+﻿#pragma warning disable CS8618
+namespace SilentApp.Domain.Entities
 {
-    public class TemperatureMeasurement : BaseStorageEntity
+    public class TemperatureMeasurement : BaseTableEntity
     {
         public const string EntityPartitionKey = "TemperatureMeasurements";
 

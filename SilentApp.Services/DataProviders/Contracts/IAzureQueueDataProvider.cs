@@ -2,8 +2,8 @@
 
 namespace SilentApp.Services.DataProviders.Contracts
 {
-    public interface IAlertsQueueDataProvider
+    public interface IAzureQueueDataProvider
     {
-        Task Send(AlertMessage message);
+        Task Send<T>(T message) where T : BaseQueueMessage;
     }
 }

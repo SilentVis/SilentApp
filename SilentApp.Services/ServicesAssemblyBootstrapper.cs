@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
-using Microsoft.Extensions.Configuration;
 using SilentApp.Infrastructure;
+using SilentApp.Infrastructure.Configuration;
 using SilentApp.Services.Contracts;
 using SilentApp.Services.DataProviders;
 using SilentApp.Services.DataProviders.Contracts;
@@ -11,13 +11,16 @@ namespace SilentApp.Services
 {
     public class ServicesAssemblyBootstrapper : IAssemblyBootstrapper
     {
-        public void RegisterDependencies(Container container, IEnumerable<Assembly> appAssemblies, IConfiguration configuration)
+        public void RegisterDependencies(Container container, IEnumerable<Assembly> appAssemblies, SilentAppConfiguration configuration)
         {
             container.RegisterInstance(TelegramBotClientFactory.Create(configuration));
 
-            container.Register<IAzureStorageTableDataProvider, AzureStorageTableDataProvider>(Lifestyle.Singleton);
-            container.Register<IAlertsApiDataProvider, AlertsApiDataProvider>(Lifestyle.Singleton);
-            container.Register<IAlertsQueueDataProvider, AlertsQueueProvider>(Lifestyle.Singleton);
+            container.Register<IAlertsApiDataProvider, AlertsApiDataProvider>(Lifestyle.Scoped);
+
+            container.Register<IStorageNameIndex, StorageNameIndex>(Lifestyle.Singleton);
+            container.Register<IAzureStorageClientFactory, AzureStorageClientFactory>(Lifestyle.Scoped);
+            container.Register<IAzureTableDataProvider, AzureTableDataProvider>(Lifestyle.Scoped);
+            container.Register<IAzureQueueDataProvider, AzureQueueDataProvider>(Lifestyle.Scoped);
 
             RegisterHandlers(container, appAssemblies, typeof(ICommandHandler<>));
             RegisterHandlers(container, appAssemblies, typeof(IQueryRunner<,>));

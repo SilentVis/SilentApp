@@ -2,7 +2,7 @@
 
 namespace SilentApp.Domain.DTO.Internal
 {
-    public class AlertMessage
+    public class AlertMessage : BaseQueueMessage
     {
         public AlertMessage(AlertMessageType type, string locationId, string alertId)
         {

@@ -1,8 +1,9 @@
 ﻿using SilentApp.Domain.Enums;
+#pragma warning disable CS8618
 
 namespace SilentApp.Domain.Entities
 {
-    public class Location : BaseStorageEntity
+    public class Location : BaseTableEntity
     {
         public const string EntityPartitionKey = "Locations";
 

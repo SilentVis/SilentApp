@@ -1,6 +1,7 @@
-﻿namespace SilentApp.Domain.Entities
+﻿#pragma warning disable CS8618
+namespace SilentApp.Domain.Entities
 {
-    public class AlertNotificationSubscription : BaseStorageEntity
+    public class AlertNotificationSubscription : BaseTableEntity
     {
         public const string EntityPartitionKey = "Subscriptions";
 

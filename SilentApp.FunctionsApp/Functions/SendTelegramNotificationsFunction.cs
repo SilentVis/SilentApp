@@ -4,7 +4,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using SilentApp.Domain.DTO.Internal;
 using SilentApp.FunctionsApp.Services.Commands;
-using SilentApp.Infrastructure;
+using SilentApp.Infrastructure.Constants;
 using SilentApp.Services.Contracts;
 
 namespace SilentApp.FunctionsApp.Functions
@@ -16,7 +16,7 @@ namespace SilentApp.FunctionsApp.Functions
         }
 
         [FunctionName("SendTelegramNotifications")]
-        public async Task Run([QueueTrigger(ConfigurationKeyConstants.AlertQueueName, Connection = ConfigurationKeyConstants.QueueConnectionString)] string myQueueItem, ILogger log)
+        public async Task Run([QueueTrigger(AppConstants.AlertsQueueName, Connection = ConfigurationKeyConstants.AzureStorageConnectionString)] string myQueueItem, ILogger log)
         {
             var alertMessage = JsonSerializer.Deserialize<AlertMessage>(myQueueItem);
             var command = new SendTelegramNotificationsCommand(alertMessage.LocationId, alertMessage.Type);

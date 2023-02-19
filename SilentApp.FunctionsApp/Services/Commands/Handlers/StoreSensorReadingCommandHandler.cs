@@ -8,9 +8,9 @@ namespace SilentApp.FunctionsApp.Services.Commands
 {
     public class StoreSensorReadingCommandHandler : ICommandHandler<StoreSensorReadingCommand>
     {
-        private readonly IAzureStorageTableDataProvider _tableDataProvider;
+        private readonly IAzureTableDataProvider _tableDataProvider;
 
-        public StoreSensorReadingCommandHandler(IAzureStorageTableDataProvider tableDataProvider)
+        public StoreSensorReadingCommandHandler(IAzureTableDataProvider tableDataProvider)
         {
             _tableDataProvider = tableDataProvider;
         }

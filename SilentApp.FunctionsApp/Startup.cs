@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Reflection;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SilentApp.FunctionsApp;
 using SilentApp.Infrastructure;
+using SilentApp.Infrastructure.Constants;
 using SilentApp.Services.Contracts;
 using SimpleInjector;
 

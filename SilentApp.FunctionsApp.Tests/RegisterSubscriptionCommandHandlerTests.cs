@@ -1,5 +1,4 @@
 using Xunit;
-using System.Threading.Tasks;
 using FakeItEasy;
 using FluentAssertions;
 using SilentApp.Domain.Entities;
@@ -12,12 +11,12 @@ namespace SilentApp.FunctionsApp.Tests
 {
     public class RegisterSubscriptionCommandHandlerTests
     {
-        private readonly IAzureStorageTableDataProvider _dataProvider;
+        private readonly IAzureTableDataProvider _dataProvider;
         private readonly RegisterSubscriptionCommandHandler _handler;
 
         public RegisterSubscriptionCommandHandlerTests()
         {
-            _dataProvider = A.Fake<IAzureStorageTableDataProvider>();
+            _dataProvider = A.Fake<IAzureTableDataProvider>();
             _handler = new RegisterSubscriptionCommandHandler(_dataProvider);
         }
 

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -9,28 +8,26 @@ using SilentApp.Domain.Entities;
 using SilentApp.Domain.Enums;
 using SilentApp.Services.Contracts;
 using SilentApp.Services.DataProviders.Contracts;
-using Telegram.Bot.Types;
-using Location = SilentApp.Domain.Entities.Location;
 
 namespace SilentApp.FunctionsApp.Services.Commands.Handlers
 {
     internal class RenewAlertsStateCommandHandler : ICommandHandler<RenewAlertsStateCommand>
     {
         private readonly IAlertsApiDataProvider _alertsApiDataProvider;
-        private readonly IAzureStorageTableDataProvider _azureStorageTableDataProvider;
+        private readonly IAzureTableDataProvider _azureTableDataProvider;
 
-        private readonly IAlertsQueueDataProvider _alertsQueueDataProvider;
+        private readonly IAzureQueueDataProvider _azureQueueDataProvider;
 
         private readonly ILogger _logger;
 
         public RenewAlertsStateCommandHandler(
             IAlertsApiDataProvider alertsApiDataProvider,
-            IAzureStorageTableDataProvider azureStorageTableDataProvider,
-            IAlertsQueueDataProvider alertsQueueDataProvider, ILogger logger)
+            IAzureTableDataProvider azureTableDataProvider,
+            IAzureQueueDataProvider azureQueueDataProvider, ILogger logger)
         {
             _alertsApiDataProvider = alertsApiDataProvider;
-            _azureStorageTableDataProvider = azureStorageTableDataProvider;
-            _alertsQueueDataProvider = alertsQueueDataProvider;
+            _azureTableDataProvider = azureTableDataProvider;
+            _azureQueueDataProvider = azureQueueDataProvider;
             _logger = logger;
         }
 
@@ -66,7 +63,7 @@ namespace SilentApp.FunctionsApp.Services.Commands.Handlers
                 PartitionKey = Location.EntityPartitionKey
             });
 
-            var existingLocations = await _azureStorageTableDataProvider.GetRecords<Location>(Location.EntityPartitionKey);
+            var existingLocations = await _azureTableDataProvider.GetRecords<Location>(Location.EntityPartitionKey);
             var foundLocationIds = existingLocations.Select(s => s.RowKey).ToList();
 
             var newLocationIds = locationIds.Where(id => !foundLocationIds.Contains(id)).ToList();
@@ -87,7 +84,7 @@ namespace SilentApp.FunctionsApp.Services.Commands.Handlers
                     newLocation.RegionId = region.RowKey;
                 }
 
-                await _azureStorageTableDataProvider.UpsertRecord(newLocation);
+                await _azureTableDataProvider.UpsertRecord(newLocation);
             }
         }
 
@@ -95,7 +92,7 @@ namespace SilentApp.FunctionsApp.Services.Commands.Handlers
         {
             var currentAlertIds = currentAlerts.Select(a => a.FormattedId).ToList();
 
-            var existingAlerts = await _azureStorageTableDataProvider.GetRecords<Alert>(Alert.EntityPartitionKey);
+            var existingAlerts = await _azureTableDataProvider.GetRecords<Alert>(Alert.EntityPartitionKey);
             var existingAlertIds = existingAlerts.Select(a => a.RowKey).ToList();
 
             var endedAlertIds = existingAlertIds.Except(currentAlertIds).ToList();
@@ -108,7 +105,7 @@ namespace SilentApp.FunctionsApp.Services.Commands.Handlers
 
             foreach (var alert in alertsToDelete)
             {
-                await _azureStorageTableDataProvider.DeleteRecord(Alert.EntityPartitionKey, alert.RowKey);
+                await _azureTableDataProvider.DeleteRecord<Alert>(Alert.EntityPartitionKey, alert.RowKey);
 
                 messages.Add(new AlertMessage(AlertMessageType.EndAlert, alert.LocationId, alert.RowKey));
             }
@@ -123,14 +120,14 @@ namespace SilentApp.FunctionsApp.Services.Commands.Handlers
                     LocationId = alertDto.LocationId
                 };
 
-                await _azureStorageTableDataProvider.UpsertRecord(alert);
+                await _azureTableDataProvider.UpsertRecord(alert);
 
                 messages.Add(new AlertMessage(AlertMessageType.StartAlert, alert.LocationId, alert.RowKey));
             }
 
             foreach (var alertMessage in messages)
             {
-                await _alertsQueueDataProvider.Send(alertMessage);
+                await _azureQueueDataProvider.Send(alertMessage);
             }
         }
     }
